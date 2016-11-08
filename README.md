@@ -19,10 +19,13 @@ $ sudo pip install impacket
 
 ## Usage Examples
 
-$ sudo iwconfig <iface> mode monitor
-$ sudo ifconfig <iface> up
+$ sudo iwconfig \<iface\> mode monitor
+
+$ sudo ifconfig \<iface\> up
+
 $ cd wig
-$ sudo python <ccx_scanner.py|wps_scanner.py|p2p_scanner.py> <iface>
+
+$ sudo python \<ccx_scanner.py|wps_scanner.py|p2p_scanner.py\> \<iface\>
 
 ## Notes
 
