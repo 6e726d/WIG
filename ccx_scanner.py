@@ -33,6 +33,8 @@
 
 
 import sys
+import time
+import pprint
 import random
 import struct
 
@@ -46,12 +48,14 @@ import helpers
 from Extensions import ccx
 
 
+BSSID_KEY = "BSSID"
 SSID_KEY = "SSID"
 CTRL_IP_ADDR_KEY = "Controller IP Address"
 AP_NAME_KEY = "Access Point Name"
 ASSOCIATED_CLIENTS_KEY = "Associated Clients"
 CHANNEL_KEY = "Channel"
 SECURITY_KEY = "Security"
+TIMESTAMP_KEY = "Timestamp"
 
 
 class Scanner(object):
@@ -89,18 +93,22 @@ class Receiver(object):
     def print_report(self):
         """Print all information."""
         print "Report"
-        for bssid in self.devices.keys():
-            print "BSSID: %s" % bssid
-            if SSID_KEY in self.devices[bssid]:
-                print "SSID: %s" % self.devices[bssid][SSID_KEY]
-            if CHANNEL_KEY in self.devices[bssid]:
-                print "Channel: %d" % self.devices[bssid][CHANNEL_KEY]
-            if SECURITY_KEY in self.devices[bssid]:
-                print "Security: %s" % self.devices[bssid][SECURITY_KEY]
-            print "Access Point Name: %s" % self.devices[bssid][AP_NAME_KEY]
-            print "Associated Clients: %d" % self.devices[bssid][ASSOCIATED_CLIENTS_KEY]
-            if CTRL_IP_ADDR_KEY in self.devices[bssid]:
-                print "Controller IP Address: %s" % self.devices[bssid][CTRL_IP_ADDR_KEY]
+        print "-" * 70
+        for device in sorted(self.devices.values(), key=lambda d: d[TIMESTAMP_KEY]):
+            if BSSID_KEY in device:
+                print "BSSID: %s" % device[BSSID_KEY]
+            if SSID_KEY in device:
+                print "SSID: %s" % device[SSID_KEY]
+            if CHANNEL_KEY in device:
+                print "Channel: %d" % device[CHANNEL_KEY]
+            if SECURITY_KEY in device:
+                print "Security: %s" % device[SECURITY_KEY]
+            if AP_NAME_KEY in device:
+                print "Access Point Name: %s" % device[AP_NAME_KEY]
+            if ASSOCIATED_CLIENTS_KEY in device:
+                print "Associated Clients: %d" % device[ASSOCIATED_CLIENTS_KEY]
+            if CTRL_IP_ADDR_KEY in device:
+                print "Controller IP Address: %s" % device[CTRL_IP_ADDR_KEY]
             print "-" * 70
 
     def run(self):
@@ -166,16 +174,18 @@ class Receiver(object):
             if data:
                 if bssid not in self.devices:
                     self.devices[bssid] = dict()
+                    self.devices[bssid][BSSID_KEY] = bssid
+                    self.devices[bssid][TIMESTAMP_KEY] = int(time.time())
                 ssid = reassociation_response._get_element(dot11.DOT11_MANAGEMENT_ELEMENTS.SSID)
                 if ssid and SSID_KEY not in self.devices[bssid]:
                     self.devices[bssid][SSID_KEY] = ssid
-                    print "Updated SSID?"
-                    print "%s - %r" % (bssid, self.devices[bssid])
+                    print "UPDATED:"
+                    pprint.pprint(self.devices[bssid])
                 if CTRL_IP_ADDR_KEY not in self.devices[bssid]:
                     ccx95 = chr(ccx.CISCO_CCX_IE_IP_ADDRESS_ID) + chr(len(data)) + data
                     self.devices[bssid][CTRL_IP_ADDR_KEY] = ccx.CiscoCCX95InformationElement(ccx95).get_ip_address()
-                    print "Set IP Address"
-                    print "%s - %r" % (bssid, self.devices[bssid])
+                    print "UPDATED:"
+                    pprint.pprint(self.devices[bssid])
         else:
             if frame_control.get_subtype() == dot11.Dot11Types.DOT11_SUBTYPE_MANAGEMENT_BEACON:
                 frame = self.decoder.get_protocol(dot11.Dot11ManagementBeacon)
@@ -189,6 +199,8 @@ class Receiver(object):
             data = frame._get_element(ccx.CISCO_CCX_IE_DEVICE_NAME_ID)
             if bssid not in self.devices and data:
                 self.devices[bssid] = dict()
+                self.devices[bssid][BSSID_KEY] = bssid
+                self.devices[bssid][TIMESTAMP_KEY] = int(time.time())
                 ccx85 = chr(ccx.CISCO_CCX_IE_DEVICE_NAME_ID) + chr(len(data)) + data
                 ssid = frame.get_ssid().replace("\x00", "")
                 channel = frame.get_ds_parameter_set()
@@ -199,7 +211,7 @@ class Receiver(object):
                 self.devices[bssid][AP_NAME_KEY] = device_name
                 self.devices[bssid][ASSOCIATED_CLIENTS_KEY] = associated_clients
                 self.devices[bssid][SECURITY_KEY] = security
-                print "%s - %r" % (bssid, self.devices[bssid])
+                pprint.pprint(self.devices[bssid])
                 if CTRL_IP_ADDR_KEY not in self.devices[bssid]:
                     data = str()
                     data += struct.pack("H", frame.get_capabilities())  # capabilities
