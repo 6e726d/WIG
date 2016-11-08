@@ -228,5 +228,5 @@ class Receiver(object):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         sys.exit(-1)
-    interface = sys.argv[1]
-    Scanner(interface)
+    iface = sys.argv[1]
+    Scanner(iface)
