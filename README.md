@@ -20,6 +20,7 @@ $ sudo pip install impacket
  - ccx_scanner.py - Cisco Client Extension information gathering
  - wps_scanner.py - Wireless Protected Setup information gathering
  - p2p_scanner.py - WiFi Direct information gathering
+ - hp_scanner.py - HP Wireless Printers information gathering
 
 ## Usage Examples
 
@@ -29,7 +30,7 @@ $ sudo ifconfig \<iface\> up
 
 $ cd wig
 
-$ sudo python \<ccx_scanner.py|wps_scanner.py|p2p_scanner.py\> \<iface\>
+$ sudo python \<ccx_scanner.py|wps_scanner.py|p2p_scanner.py|hp_scanner.py\> \<iface\>
 
 ## Notes
 
