@@ -3,7 +3,7 @@
 #
 # BSD 3-Clause License
 #
-# Copyright (c) 2016, Andrés Blanco (6e726d@gmail.com)
+# Copyright (c) 2017, Andrés Blanco (6e726d@gmail.com)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 import sys
 import time
 import signal
+import string
 import struct
 
 from multiprocessing import Process
@@ -178,6 +179,8 @@ class Receiver(object):
                 if frame:
                     self.process_probe_response_frame(frame)
             except Exception, e:
+                import traceback
+                traceback.print_exc()
                 print "Exception: %s" % str(e)
             except KeyboardInterrupt:
                 print "Sniffing Process: Caught CTRL+C. Exiting..."
@@ -206,7 +209,9 @@ class Receiver(object):
         if device_mac not in self.devices.keys():
             self.devices[device_mac] = list()
             vs_list = probe_response_frame.get_vendor_specific()
-            print "MAC Address: %s" % device_mac
+            wps_ie_info = dict()
+            p2p_ie_info = dict()
+            channel = probe_response_frame.get_ds_parameter_set()
             for vs_element in vs_list:
                 oui, data = vs_element
                 vs_type = data[0]
@@ -216,13 +221,32 @@ class Receiver(object):
                     ie = wps.WPSInformationElement(raw_data)
                     for wps_element in ie.get_elements():
                         k, v = wps_element
-                        print "%s: %r" % (k, v)
+                        if all(c in string.printable for c in v):
+                            wps_ie_info[string.capwords(k)] = v
+                        else:
+                            wps_ie_info[string.capwords(k)] = repr(v)
                 elif oui == p2p.P2PInformationElement.P2P_OUI and vs_type == p2p.P2PInformationElement.P2P_OUI_TYPE:
                     ie = p2p.P2PInformationElement(raw_data)
                     for p2p_element in ie.get_elements():
                         k, v = p2p_element
-                        print "%s: %r" % (k, v)
-            print "-" * 70
+                        if all(c in string.printable for c in v):
+                            p2p_ie_info[string.capwords(k)] = v
+                        else:
+                            p2p_ie_info[string.capwords(k)] = repr(v)
+            # Print P2P Device Information
+            print "MAC Address: %s" % device_mac
+            print "Channel: %d" % channel
+            print "-" * 80
+            print "Wi-Fi Direct Information:"
+            print "-------------------------"
+            for key, value in p2p_ie_info.items():
+                print "%s: %s" % (key, value)
+            print "-" * 80
+            print "WPS Information:"
+            print "----------------"
+            for key, value in wps_ie_info.items():
+                print "%s: %s" % (key, value)
+            print "=" * 80
 
 
 if __name__ == "__main__":

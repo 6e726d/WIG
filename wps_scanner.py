@@ -34,6 +34,7 @@
 
 import sys
 import time
+import string
 import signal
 import struct
 
@@ -191,7 +192,10 @@ class Receiver(object):
                     ie = wps.WPSInformationElement(raw_data)
                     for element in ie.get_elements():
                         k, v = element
-                        print "%s: %r" % (k, v)
+                        if all(c in string.printable for c in v):
+                            print "%s: %s" % (string.capwords(k), v)
+                        else:
+                            print "%s: %r" % (string.capwords(k), v)
                     print "-" * 70
 
 

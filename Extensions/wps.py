@@ -202,7 +202,8 @@ class WPSInformationElement(object):
         if not self.buffer[idx:self.FIXED_DATA_LENGTH] == self.WPS_OUI + self.WPS_OUI_TYPE:
             raise InvalidWPSInformationElement("Invalid WPS information element id.")
 
-    def get_config_methods_string(self, data):
+    @staticmethod
+    def get_config_methods_string(data):
         """Returns a string with the WPS configuration methods based on the data parameter."""
         config_methods_list = list()
         config_method_value = struct.unpack("!H", data)[0]
@@ -248,7 +249,8 @@ class WPSInformationElement(object):
             uuid += "%02X" % ord(char)
         return uuid
 
-    def get_primary_device_type_string(self, data):
+    @staticmethod
+    def get_primary_device_type_string(data):
         """Returns a string with the WPS primary device type based on the data parameter."""
         primary_device_type = str()
         category = struct.unpack("!H", data[:2])[0]
