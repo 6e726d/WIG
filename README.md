@@ -22,8 +22,9 @@ $ sudo pip install impacket
 
  - ccx_scanner.py - Cisco Client Extension information gathering
  - wps_scanner.py - Wireless Protected Setup information gathering
- - p2p_scanner.py - WiFi Direct information gathering
  - hp_scanner.py - HP Wireless Printers information gathering
+ - p2p_scanner.py - Wi-Fi Direct information gathering
+ - p2p_service.py - Wi-Fi Direct Service Discovery information gathering
 
 ## Usage Examples
 
