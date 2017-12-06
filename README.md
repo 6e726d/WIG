@@ -3,7 +3,9 @@ Tools for 802.11 information gathering.
 
 With ccx_scanner tool it's possible to gather the access point name, number of associated clients and the wireless controller IP address on Cisco Aironet devices with CCX feature (this feature it's enable by default).
 
-With wps_scanner and p2p_scanner tools it's possible to gather information such as manufaturer, model name, model version, serial number among others on access points with WPS support and Wi-Fi Direct enabled devices.
+With wps_scanner tools it's possible to gather information such as manufaturer, model name, model version, serial number among others on access points with WPS support.
+
+With p2p_scanner and p2p_service it's possible to gather information such as the WPS, P2P Capabilities and P2P Device information from devices with Wi-Fi Direct support.
 
 ## Requirements
 
@@ -13,6 +15,7 @@ With wps_scanner and p2p_scanner tools it's possible to gather information such 
 ### Installation
 
 $ sudo pip install pcapy
+
 $ sudo pip install impacket
 
 ## Tools
