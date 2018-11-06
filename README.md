@@ -20,11 +20,12 @@ $ sudo pip install impacket
 
 ## Tools
 
+ - awdl_scanner.py - Apple Wireless Direct Link information gathering
  - ccx_scanner.py - Cisco Client Extension information gathering
- - wps_scanner.py - Wireless Protected Setup information gathering
  - hp_scanner.py - HP Wireless Printers information gathering
  - p2p_scanner.py - Wi-Fi Direct information gathering
  - p2p_service.py - Wi-Fi Direct Service Discovery information gathering
+ - wps_scanner.py - Wireless Protected Setup information gathering
 
 ## Usage Examples
 
@@ -34,7 +35,7 @@ $ sudo ifconfig \<iface\> up
 
 $ cd wig
 
-$ sudo python \<ccx_scanner.py|wps_scanner.py|p2p_scanner.py|hp_scanner.py\> \<iface\>
+$ sudo python \<awdl_scanner.py|ccx_scanner.py|hp_scanner.py|p2p_scanner.py|wps_scanner.py\> \<iface\>
 
 ## Notes
 
